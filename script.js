@@ -1,22 +1,12 @@
 document.addEventListener("DOMContentLoaded", function () {
 const questions = [
     {
-        question : `#include <stdio.h>
-        int main() {
-            int x = 10;
-            if (x = 5) {
-                printf("True");
-            } else {
-                printf("False");
-            }
-            return 0;
-        }
-        `,
+        question : "What does the #define directive in C do?",
          answers : [
-                {text : "True",correct:true},
-                {text : "False",correct:false},
-                {text : "Compile Error",correct:false},
-                {text : "Runtime Error",correct:false}
+                {text : "Includes a header file",correct:true},
+                {text : "Declares a variable",correct:false},
+                {text : "Defines a macro",correct:false},
+                {text : "Declares a function",correct:false}
             ]
     },
     {
@@ -34,7 +24,7 @@ const questions = [
                 {text : "2 bytes",correct:false},
                 {text : "4 bytes",correct:true},
                 {text : "8 bytes",correct:false},
-                {text : "Depens on system",correct:false}
+                {text : "Depends on system",correct:false}
             ]
     },
     {
@@ -84,6 +74,10 @@ function showQuestion(){
         button.innerHTML = answer.text;
         button.classList.add("btn");
         answerButton.appendChild(button);
+        if(answer.correct){
+            button.dataset.correct = answer.correct;
+        }
+        button.addEventListener("click",selectAnswer);
     });
 }
 
@@ -94,6 +88,51 @@ function resetState(){
     }
 }
 
+function selectAnswer(e){
+    const selectedBtn = e.target;
+    const isCorrect = selectedBtn.dataset.correct === "true";
+    if(isCorrect){
+        selectedBtn.classList.add("correct");
+        score++;
+    }
+    else{
+        selectedBtn.classList.add("incorrect");
+    }
+    Array.from(answerButton.children).forEach(button => {
+        if(button.dataset.correct === "true"){
+            button.classList.add("correct");
+        }
+        button.disabled = true;
+    });
+    nextButton.style.display = "block";
+}
+
+function showScore(){
+    resetState();
+    questionElement.innerHTML = `You scored ${score} out of ${questions.length}`;
+    nextButton.innerHTML ="Play Again";
+    nextButton.style.display = "block";
+}
+
+function handleNextButton(){
+    currentQuestionIndex++;
+    if(currentQuestionIndex < questions.length){
+        showQuestion();
+    }
+    else{
+        showScore();
+    }
+}
+
+nextButton.addEventListener("click",()=>{
+    if(currentQuestionIndex < questions.length){
+        handleNextButton();
+    }
+    else
+    {
+        startQuiz();
+    }
+});
 
 startQuiz();
 });
